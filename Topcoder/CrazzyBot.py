@@ -8,7 +8,7 @@
 #             direction.append('e')
 #
 #         if(west > 0):
-#             direction.append('w')1
+#             direction.append('w')
 #
 #         if(south > 0):
 #             direction.append('s')
