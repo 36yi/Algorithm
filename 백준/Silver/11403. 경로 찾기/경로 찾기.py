@@ -1,38 +1,32 @@
 import sys
 input = sys.stdin.readline
 
-from collections import defaultdict
+from collections import deque
+N = int(input())
+graph = []
+for i in range(N):
+    graph.append(list(map(int, input().split())))
 
-def dfs(start,ind,visited,flag):
-    if start == ind and flag == True:
-        return
+def bfs(x):
+    q = deque()
+    q.append(x)
+    visited = [0] * N
+    while q:
+        z = q.popleft()
+        for i in range(N):
+            if graph[z][i] == 1 and visited[i] == 0:
+                visited[i] = 1
+                graph[x][i] = 1
+                q.append(i)
 
-    for i in graph[ind]:
-        if i not in visited:
-            visited.append(i)
-            dfs(start,i,visited,True)
 
+for i in range(N):
+    bfs(i)
 
-n = int(input())
-graph = defaultdict(set)
-li = []
-
-for i in range(n):
-    li.append(list(map(int, input().split())))
-
-for i in range(n):
-    for j in range(n):
-        if li[i][j] != 0:
-            graph[i].add(j)
-for i in range(n):
-    v = []
-    dfs(i,i,v,False)
-    graph[i] |= set(v)
-
-for i in range(n):
-    for j in range(n):
-        if j in graph[i]:
-            print(1,end=' ')
+for i in range(N):
+    for j in range(N):
+        if graph[i][j] == 1:
+            print(1,end=" ")
         else:
-            print(0,end=' ')
+            print(0,end=" ")
     print()
