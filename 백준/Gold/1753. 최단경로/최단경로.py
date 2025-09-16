@@ -1,7 +1,7 @@
+import heapq
 import sys
 input = sys.stdin.readline
 
-import heapq
 V, E = map(int, input().split())
 K = int(input())
 graph = [[] for _ in range(V + 1)]
@@ -19,6 +19,7 @@ def dijkstra(start):
     heapq.heappush(heap, (0, start))
     while heap:
         d, v = heapq.heappop(heap)
+        if d > distance[v]: continue
         for next_v, w in graph[v]:
             if distance[next_v] > w + distance[v]:
                 distance[next_v] = w+ distance[v]
