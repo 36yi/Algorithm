@@ -1,41 +1,37 @@
-import sys
-pri = {'+': 0, '-':0, '*':1, '/': 1, '(':2, ')':2}
-input = sys.stdin.readline
-STR = list(input().rstrip())
+str = input()
+ans = ''
 operator = []
-ans = []
 
-for i in range(len(STR)):
-    if STR[i] not in pri.keys():
-        ans.append(STR[i])
+for s in str:
+    if s.isalpha():
+        ans += s
 
     else:
-        if len(operator) == 0:
-            operator.append(STR[i])
+        if s == '(':
+            operator.append(s)
 
-        elif STR[i] == ')':
+        elif s == '*' or s =='/':
             while operator:
-                x = operator.pop()
-                if x == '(':
-                    break
-
-                ans.append(x)
-
-        elif pri[operator[-1]] >= pri[STR[i]] and operator[-1] != '(':
-            mark = pri[STR[i]]
-            while operator:
-                x = operator.pop()
-                if pri[x] >= mark and x != '(':
-                    ans.append(x)
+                if operator[-1] == '*' or operator[-1] == '/':
+                    ans += operator.pop()
                 else:
-                    operator.append(x)
                     break
-            operator.append(STR[i])
+            operator.append(s)
+        elif s == '+' or s == '-':
+            while operator:
+                if operator[-1] == '(':
+                    break
+                else:
+                    ans += operator.pop()
+            operator.append(s)
         else:
-            operator.append(STR[i])
-
+            while operator:
+                if operator[-1] == '(':
+                    operator.pop()
+                    break
+                else:
+                    ans += operator.pop()
 while operator:
-    x = operator.pop()
-    ans.append(x)
+    ans+=(operator.pop())
 
-print(''.join(ans))
+print(ans)
