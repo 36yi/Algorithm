@@ -1,43 +1,45 @@
 from collections import deque
 
-dx = [1,-1,0,0]
-dy = [0,0,1,-1]
-
-
-
-
-
-M, N = map(int, input().split())
+c, r = map(int, input().split())
 board = []
-for i in range(N):
+for _ in range(r):
     board.append(list(map(int, input().split())))
 
-q = deque()
-
-for i in range(N):
-    for j in range(M):
+queue = deque([])
+for i in range(r):
+    for j in range(c):
         if board[i][j] == 1:
-            q.append((i,j))
+            start_row, start_col = i, j
+            queue.append((i, j, 0))
 
-while q:
-    y,x = q.popleft()
+dr = (0,1,0,-1)
+dc = (1,0,-1,0)
+
+
+while queue:
+    row, col, day = queue.popleft()
     for i in range(4):
-        ny = y + dy[i]
-        nx = x + dx[i]
-        if 0 <= ny < N and 0 <= nx < M:
-            if board[ny][nx] == 0:
-                board[ny][nx] = board[y][x] + 1
-                q.append((ny,nx))
+        next_row, next_col = row + dr[i], col + dc[i]
+        if 0 <= next_row < r and 0 <= next_col < c:
+            if board[next_row][next_col] == 0:
+                board[next_row][next_col] = day+1
+                queue.append((next_row, next_col,day+1))
 
 m = 0
-flag = True
-for i in range(N):
-    for j in range(M):
+f = True
+for i in range(r):
+    for j in range(c):
         if board[i][j] == 0:
-            flag = False
-        m = max(m, board[i][j])
-
-if flag:
-    print(m-1)
-else:
-    print(-1)
+            f = False
+            print(-1)
+            break
+        else:
+            if m < board[i][j]:
+                m = board[i][j]
+    if f == False:
+        break
+if f:
+    if m == 1:
+        print(0)
+    else:
+        print(m)
