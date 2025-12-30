@@ -1,41 +1,40 @@
 import sys
 input = sys.stdin.readline
-
 from collections import deque
 
-N, M = map(int, input().split())
+R, C = map(int, input().split())
 board = []
-for _ in range(N):
+visited = [[[float('inf')] * C for _ in range(R)] for __ in range(2)]
+for _ in range(R):
     board.append(list(input()))
 
-visited = [[[float('inf')] * M for _ in range(N)] for _ in range(2)]
-q = deque()
-q.append((0, 0, False))
+dirs = ((1,0), (-1,0), (0,1), (0,-1))
+queue = deque([])
 visited[0][0][0] = 1
-d = ((0,1),(1,0),(0,-1),(-1,0))
+queue.append((0, 0, 0)) # 세번째 인자는 벽을 부쉈는가 확인
 
-while q:
-    crnt_row, crnt_col, used = q.popleft()
-    for dr, dc in d:
-        next_row, next_col = crnt_row + dr, crnt_col + dc
-        if 0 <= next_row < N and 0 <= next_col < M:
-            if used == False:
-                if board[next_row][next_col] == '0' and visited[0][next_row][next_col] == float('inf'):
-                    visited[0][next_row][next_col] = visited[0][crnt_row][crnt_col] + 1
-                    q.append((next_row, next_col,used))
-                else:
-                    if visited[1][next_row][next_col] == float('inf'):
-                        visited[1][next_row][next_col] = visited[0][crnt_row][crnt_col] + 1
-                        q.append((next_row, next_col,True))
+while queue:
+    r, c, f = queue.popleft()
+    for dr, dc in dirs:
+        nr = r + dr
+        nc = c + dc
+        if 0 <= nr < R and 0 <= nc < C:
+            if f:
+                if board[nr][nc] == '0':
+                    if visited[f][nr][nc] > visited[f][r][c] + 1:
+                        visited[f][nr][nc] = visited[f][r][c] + 1
+                        queue.append((nr, nc, 1))
             else:
-                if board[next_row][next_col] == '0' and visited[1][next_row][next_col] == float('inf'):
-                    visited[1][next_row][next_col] = visited[1][crnt_row][crnt_col] + 1
-                    q.append((next_row, next_col,used))
+                if board[nr][nc] == '1':
+                    if visited[1][nr][nc] > visited[f][r][c] + 1:
+                        visited[1][nr][nc] = visited[f][r][c] + 1
+                        queue.append((nr, nc, 1))
                 else:
-                    pass
-                
-m = min(visited[0][N-1][M-1], visited[1][N-1][M-1])
-if m == float('inf'):
+                    if visited[f][nr][nc] > visited[f][r][c] + 1:
+                        visited[f][nr][nc] = visited[f][r][c] + 1
+                        queue.append((nr, nc, 0))
+
+if visited[0][R-1][C-1] == float('inf') and visited[1][R-1][C-1] == float('inf'):
     print(-1)
 else:
-    print(m)
+    print(min(visited[0][R-1][C-1], visited[1][R-1][C-1]))
