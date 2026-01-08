@@ -1,32 +1,43 @@
-# 백트래킹 (Python3 통과, PyPy3도 통과)
-import sys
-
-input = sys.stdin.readline
 N = int(input())
-num = list(map(int, input().split()))
-op = list(map(int, input().split()))  # +, -, *, //
+nums = list(map(int, input().split()))
+li = list(map(int, input().split()))
+operator = [] # +-x/
 
-maximum = -1e9
-minimum = 1e9
+for i in range(4):
+    for _ in range(li[i]):
+        operator.append(i)
 
+minimum = float('inf')
+maximum = -float('inf')
+visited = [False] * (N - 1)
 
-def dfs(depth, total, plus, minus, multiply, divide):
-    global maximum, minimum
-    if depth == N:
-        maximum = max(total, maximum)
-        minimum = min(total, minimum)
-        return
-
-    if plus:
-        dfs(depth + 1, total + num[depth], plus - 1, minus, multiply, divide)
-    if minus:
-        dfs(depth + 1, total - num[depth], plus, minus - 1, multiply, divide)
-    if multiply:
-        dfs(depth + 1, total * num[depth], plus, minus, multiply - 1, divide)
-    if divide:
-        dfs(depth + 1, int(total / num[depth]), plus, minus, multiply, divide - 1)
-
-
-dfs(1, num[0], op[0], op[1], op[2], op[3])
+def cal(n, result):
+    if n == N:
+        global minimum, maximum
+        minimum = min(minimum, result)
+        maximum = max(maximum, result)
+    prev_op = -1
+    for i in range(N-1):
+        if visited[i]:
+            continue
+        if operator[i] == prev_op:
+            continue
+        prev_op = operator[i]
+        visited[i] = True
+        if operator[i] == 0:
+            cal(n+1, result + nums[n])
+        elif operator[i] == 1:
+            cal(n+1, result - nums[n])
+        elif operator[i] == 2:
+            cal(n+1, result * nums[n])
+        else:
+            if result < 0:
+                result = result * -1
+                cal(n+1, (result // nums[n])*-1)
+                result = result * -1
+            else:
+                cal(n+1, result // nums[n])
+        visited[i] = False
+cal(1, nums[0])
 print(maximum)
 print(minimum)
